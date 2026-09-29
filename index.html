@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>國立鳳新高中 「個別化教育計畫」(IEP) 系統 - 雲端同步版</title>
+    <title>國立鳳新高中 「個別化教育計畫」(IEP) 系統</title>
+    <!-- 引入 docx.js 與 FileSaver 庫，用於網頁端直接生成 Word 檔案 -->
     <script src="https://unpkg.com/docx@7.8.2/build/index.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <style>
@@ -109,7 +110,7 @@
             font-weight: bold;
             color: #475569;
             border-radius: 8px 8px 0 0;
-            transition: all 0.2s ease-in-out;
+            transition: all 0.2s;
         }
 
         .tab-btn:nth-child(1).active { background: var(--vibrant-blue); color: #ffffff; }
@@ -147,13 +148,12 @@
             color: #334155;
         }
 
-        input[type="text"], input[type="date"], select, textarea {
+        input[type="text"], select, textarea {
             width: 98%;
             padding: 7px 10px;
             border: 1px solid #cbd5e1;
             border-radius: 6px;
             box-sizing: border-box;
-            font-family: inherit;
             background-color: #f8fafc;
         }
 
@@ -164,11 +164,6 @@
             display: inline-flex;
             align-items: center;
             cursor: pointer;
-        }
-
-        input[type="checkbox"], input[type="radio"] {
-            margin-right: 5px;
-            accent-color: var(--vibrant-blue);
         }
 
         .action-bar {
@@ -197,18 +192,17 @@
         .btn-save { background-color: var(--vibrant-orange); color: #ffffff; }
         .btn-export { background-color: var(--vibrant-red); color: #ffffff; }
 
-        /* 讀取遮罩 */
         #loadingOverlay {
             display: none;
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 255, 255, 0.8);
+            top:0; left:0; width:100%; height:100%;
+            background: rgba(255,255,255,0.8);
             z-index: 9999;
             justify-content: center;
             align-items: center;
             font-size: 18px;
             font-weight: bold;
-            color: #237a9f;
+            color: var(--vibrant-blue);
         }
     </style>
 </head>
@@ -223,7 +217,7 @@
         <div class="control-group">
             <label for="studentSelect">👤 選擇學生：</label>
             <select id="studentSelect" onchange="onStudentChange()">
-                <option value="">-- 載入資料中 --</option>
+                <option value="">-- 請選擇學生 --</option>
             </select>
             <button type="button" class="btn-sm btn-primary" onclick="addNewStudent()">+ 新增學生</button>
         </div>
@@ -237,7 +231,6 @@
         </div>
     </div>
 
-    <!-- 分頁導覽欄 -->
     <div class="tab-nav">
         <button class="tab-btn active" id="btn-sec1" onclick="switchTab('sec1')">
             壹、能力現況與需求評估 <span class="badge" id="badge-sec1"></span>
@@ -267,7 +260,7 @@
                 </tr>
                 <tr>
                     <th>學年學期</th>
-                    <td><input type="text" name="semester_name" id="semester_name" placeholder="例：113學年度第1學期"></td>
+                    <td><input type="text" name="semester_name" id="semester_name" placeholder="例：114學年度第2學期"></td>
                     <th>障礙類別</th>
                     <td><input type="text" name="disability_type" placeholder="例：自閉症"></td>
                 </tr>
@@ -317,47 +310,51 @@
             <table>
                 <tr>
                     <th>轉銜服務需求</th>
-                    <td><textarea name="transition_services" placeholder="如：升學輔導..."></textarea></td>
+                    <td><textarea name="transition_services" placeholder="如：升學輔導、職場體驗..."></textarea></td>
                 </tr>
             </table>
         </div>
     </form>
 
     <div class="action-bar">
-        <button type="button" class="btn btn-save" onclick="saveCurrentSemesterData()">☁️ 同步儲存至雲端試算表</button>
-        <button type="button" class="btn btn-export" onclick="generateWordDocument()">📄 匯出 Word (.docx) 檔案</button>
+        <button type="button" class="btn btn-save" onclick="saveCurrentSemesterData()">💾 儲存本學期資料至雲端</button>
+        <button type="button" class="btn btn-export" onclick="alert('即可搭配 docx.js 匯出 Word')">📄 匯出完整 Word (.docx)</button>
     </div>
 </div>
 
 <script>
-    // ⚠️ 貼上您從 Google Apps Script 部署獲得的網址
-    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxMWno7XkzCNr8S2D7CBzpq194zarh5_NkPqmC7qcjiw9sAc4XAyuhN_Y34dksIg146UQ/exec";
+    // 🔗 請貼上您的 GAS 部署網址
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbybbbg8z_GUiOWQbSGtKRNnjtgU7DkfgPpc1yalpTBLkxEuYrQwSgJ_TDGOzsYpfvFChA/exec";
 
-    let dbData = {};
+    let globalDB = {};
     let currentStudentId = null;
     let currentSemesterKey = null;
 
     window.onload = function() {
-        loadDataFromCloud();
+        fetchCloudDB();
     };
 
     function showLoading(show) {
         document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
     }
 
-    // 從 Google 試算表載入資料
-    function loadDataFromCloud() {
+    // 從 Google Apps Script 載入雲端全校學生資料
+    function fetchCloudDB() {
         showLoading(true);
         fetch(GAS_API_URL)
             .then(res => res.json())
-            .then(data => {
-                dbData = data || {};
-                loadStudentDropdown();
+            .then(res => {
                 showLoading(false);
+                if (res.status === "success") {
+                    globalDB = res.data;
+                    loadStudentDropdown();
+                } else {
+                    alert("讀取雲端失敗：" + res.message);
+                }
             })
             .catch(err => {
-                alert("雲端資料讀取失敗，請確認 GAS API 網址！");
                 showLoading(false);
+                alert("無法連線至雲端 API，請確認 GAS 權限已設為『所有人』！");
             });
     }
 
@@ -365,10 +362,10 @@
         const select = document.getElementById('studentSelect');
         select.innerHTML = '<option value="">-- 請選擇學生 --</option>';
 
-        for (let id in dbData) {
+        for (let id in globalDB) {
             const opt = document.createElement('option');
             opt.value = id;
-            opt.textContent = `${dbData[id].name} (${id})`;
+            opt.textContent = `${globalDB[id].name} (${id})`;
             select.appendChild(opt);
         }
     }
@@ -386,9 +383,9 @@
         }
 
         currentStudentId = studentId;
-        const student = dbData[studentId];
-        const semesters = Object.keys(student.semesters || {});
+        const student = globalDB[studentId];
 
+        const semesters = Object.keys(student.semesters || {});
         semesters.forEach(semKey => {
             const opt = document.createElement('option');
             opt.value = semKey;
@@ -413,7 +410,7 @@
         }
 
         currentSemesterKey = semKey;
-        const semData = dbData[currentStudentId].semesters[semKey];
+        const semData = globalDB[currentStudentId].semesters[semKey];
         fillFormWithData(semData);
         updateTabProgress();
     }
@@ -424,34 +421,31 @@
         const id = prompt("請輸入學號：");
         if (!id) return;
 
-        if (dbData[id]) {
+        if (globalDB[id]) {
             alert("該學號學生已存在！");
             return;
         }
 
-        const semKey = "113-1";
-        const semName = "113學年度第1學期";
+        const firstSemesterKey = "114-2";
+        const firstSemesterName = "114學年度第2學期";
 
-        const formData = {
-            student_name: name,
-            student_id: id,
-            semester_name: semName
-        };
-
-        dbData[id] = {
+        globalDB[id] = {
             id: id,
             name: name,
-            semesters: { [semKey]: formData }
+            semesters: {
+                [firstSemesterKey]: {
+                    student_name: name,
+                    student_id: id,
+                    semester_name: firstSemesterName
+                }
+            }
         };
 
-        currentStudentId = id;
-        currentSemesterKey = semKey;
-
-        // 即時上傳 Google 試算表
-        saveToCloud(id, name, semKey, formData, () => {
+        syncStudentToCloud(id, function() {
             loadStudentDropdown();
             document.getElementById('studentSelect').value = id;
             onStudentChange();
+            alert(`已新增學生 ${name} 並同步至雲端！`);
         });
     }
 
@@ -461,13 +455,12 @@
             return;
         }
 
-        const student = dbData[currentStudentId];
+        const student = globalDB[currentStudentId];
         const semKeys = Object.keys(student.semesters || {});
-
         const lastSemKey = semKeys[semKeys.length - 1];
-        const lastSemData = student.semesters[lastSemKey];
+        const lastSemData = student.semesters[lastSemKey] || {};
 
-        const newSemName = prompt("請輸入新學期的名稱：", "113學年度第2學期");
+        const newSemName = prompt("請輸入新學期的名稱：", "115學年度第1學期");
         if (!newSemName) return;
 
         const newSemKey = "SEM_" + Date.now();
@@ -476,11 +469,11 @@
 
         student.semesters[newSemKey] = newSemData;
 
-        saveToCloud(currentStudentId, student.name, newSemKey, newSemData, () => {
+        syncStudentToCloud(currentStudentId, function() {
             onStudentChange();
             document.getElementById('semesterSelect').value = newSemKey;
             onSemesterChange();
-            alert(`已開啟新學期【${newSemName}】，並成功續帶上一學期資料！`);
+            alert(`已開啟「${newSemName}」並帶入上一學期資料！`);
         });
     }
 
@@ -490,8 +483,7 @@
             return;
         }
 
-        const form = document.getElementById('iepForm');
-        const formData = new FormData(form);
+        const formData = new FormData(document.getElementById('iepForm'));
         const data = {};
 
         formData.forEach((value, key) => {
@@ -503,46 +495,48 @@
             }
         });
 
-        const studentName = dbData[currentStudentId].name;
-        dbData[currentStudentId].semesters[currentSemesterKey] = data;
+        globalDB[currentStudentId].semesters[currentSemesterKey] = data;
 
-        saveToCloud(currentStudentId, studentName, currentSemesterKey, data, () => {
-            alert("✅ 資料已成功儲存並同步至 Google 試算表！");
+        syncStudentToCloud(currentStudentId, function() {
+            alert("本學期 IEP 資料已儲存並同步至雲端！");
         });
     }
 
-    function saveToCloud(studentId, studentName, semesterKey, formData, callback) {
+    // 將資料同步傳回 Google 雲端
+    function syncStudentToCloud(studentId, callback) {
         showLoading(true);
         const payload = {
             student_id: studentId,
-            student_name: studentName,
-            semester_key: semesterKey,
-            form_data: formData
+            student_name: globalDB[studentId].name,
+            semesters: globalDB[studentId].semesters
         };
 
         fetch(GAS_API_URL, {
-            method: 'POST',
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
             body: JSON.stringify(payload)
         })
         .then(res => res.json())
         .then(res => {
             showLoading(false);
-            if (callback) callback();
+            if (res.status === "success") {
+                if (callback) callback();
+            } else {
+                alert("儲存至雲端失敗：" + res.message);
+            }
         })
         .catch(err => {
             showLoading(false);
-            alert("同步至 Google 試算表失敗，請檢查網路連線或 API 設定！");
+            alert("網路連線錯誤，儲存失敗！");
         });
     }
 
     function fillFormWithData(data) {
         clearForm();
         const form = document.getElementById('iepForm');
-
         for (let key in data) {
             const val = data[key];
             const elements = form.querySelectorAll(`[name="${key}"]`);
-
             elements.forEach(el => {
                 if (el.type === 'checkbox' || el.type === 'radio') {
                     if (Array.isArray(val)) {
@@ -575,41 +569,23 @@
             const tabBtn = document.getElementById('btn-' + secId);
             const badge = document.getElementById('badge-' + secId);
             if (!secEl) return;
-
             const inputs = secEl.querySelectorAll('input, select, textarea');
-            if (inputs.length === 0) return;
-
             let filledCount = 0;
-            const checkedGroups = new Set();
-
             inputs.forEach(input => {
                 if (input.type === 'checkbox' || input.type === 'radio') {
-                    if (input.checked) checkedGroups.add(input.name || input.id);
+                    if (input.checked) filledCount++;
                 } else if (input.value.trim() !== '') {
                     filledCount++;
                 }
             });
-
-            const totalItems = inputs.length;
-            const currentFilled = filledCount + checkedGroups.size;
-
-            if (currentFilled > 0 && currentFilled >= totalItems) {
-                tabBtn.classList.add('completed');
-                badge.innerText = '(✓ 完成)';
-            } else if (currentFilled > 0) {
-                tabBtn.classList.remove('completed');
-                const percent = Math.round((currentFilled / totalItems) * 100);
-                badge.innerText = `(${percent}%)`;
+            if (filledCount > 0) {
+                badge.innerText = `(${filledCount})`;
             } else {
-                tabBtn.classList.remove('completed');
                 badge.innerText = '';
             }
         });
     }
-
-    function generateWordDocument() {
-        alert('匯出 Word 功能啟動中...');
-    }
 </script>
+
 </body>
 </html>

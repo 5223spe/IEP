@@ -16,7 +16,8 @@
             --vibrant-yellow: #f1bf43;
             --vibrant-orange: #f38237;
             --vibrant-red: #f84f50;
-            --vibrant-purple: #7c5295;
+            --vibrant-purple: #8A52A5; /* 調淺紫顏色，與圖片一致 */
+            --vibrant-purple-hover: #794394;
             --complete-blue: #1b5e7d;
             --bg-color: #f1f5f9;
             --border-color: #cbd5e1;
@@ -97,20 +98,20 @@
             overflow: hidden;
         }
 
-        /* 頂部 Header 欄位 */
+        /* 頂部 Header 欄位（標題與學期選單放在同行） */
         .top-header {
             background-color: #ffffff;
-            height: 65px;
-            padding: 0 25px;
+            min-height: 70px;
+            padding: 0 30px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             border-bottom: 1px solid #e2e8f0;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
         }
 
         .system-title {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: bold;
             color: #1e293b;
         }
@@ -118,10 +119,10 @@
         .header-controls {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
             background-color: #f8fafc;
             padding: 6px 16px;
-            border-radius: 8px;
+            border-radius: 10px;
             border: 1px solid #e2e8f0;
         }
 
@@ -139,28 +140,44 @@
         }
 
         .header-control-group select {
-            padding: 6px 12px;
-            border-radius: 6px;
+            padding: 6px 14px;
+            border-radius: 8px;
             border: 1px solid #cbd5e1;
             font-size: 14px;
             background-color: #ffffff;
             color: #237a9f;
             font-weight: bold;
+            cursor: pointer;
         }
 
-        /* 內容容器 Content Container */
+        /* 內容容器 Content Container（內建直向拉條/滾動條） */
         .content-container {
             flex-grow: 1;
-            padding: 20px;
-            overflow-y: auto;
+            padding: 25px;
+            overflow-y: auto; /* 超過頁面時自動出現右側拉條 */
+        }
+
+        /* 自訂美化滾動條 Styles */
+        .content-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        .content-container::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .content-container::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .content-container::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
         }
 
         .page-panel {
             display: none;
             background: #ffffff;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+            padding: 28px;
+            border-radius: 14px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.04);
         }
 
         .page-panel.active {
@@ -171,9 +188,9 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 22px;
             padding-bottom: 12px;
-            border-bottom: 2px solid #e2e8f0;
+            border-bottom: 2px solid #f1f5f9;
         }
 
         .panel-title {
@@ -185,10 +202,10 @@
 
         /* 按鈕樣式 */
         .btn {
-            padding: 8px 16px;
+            padding: 9px 18px;
             font-size: 14px;
             font-weight: bold;
-            border-radius: 6px;
+            border-radius: 8px;
             border: none;
             cursor: pointer;
             transition: all 0.2s;
@@ -207,7 +224,7 @@
         .btn-danger { background: #f84f50; color: white; }
         .btn-danger:hover { background: #d32f2f; }
         .btn-purple { background: var(--vibrant-purple); color: white; }
-        .btn-purple:hover { background: #633e79; }
+        .btn-purple:hover { background: var(--vibrant-purple-hover); }
         .btn-secondary { background: #64748b; color: white; }
         .btn-secondary:hover { background: #475569; }
 
@@ -221,21 +238,21 @@
 
         th, td {
             border: 1px solid #e2e8f0;
-            padding: 12px;
+            padding: 12px 16px;
             vertical-align: middle;
         }
 
         th {
-            background-color: #e2e8f0;
+            background-color: #f1f5f9;
             text-align: center;
             font-weight: bold;
-            color: #334155;
+            color: #475569;
         }
 
-        /* 年級膠囊 Badge */
+        /* 年級膠囊 Badge (與圖片樣式一致) */
         .badge-pill {
             display: inline-block;
-            padding: 4px 16px;
+            padding: 4px 18px;
             border-radius: 50px;
             font-size: 13px;
             font-weight: bold;
@@ -293,11 +310,6 @@
         .tab-btn:nth-child(4).active { background: var(--vibrant-green); color: #ffffff; }
         .tab-btn:nth-child(5).active { background: var(--vibrant-yellow); color: #1e293b; }
 
-        .tab-btn.completed {
-            background-color: var(--complete-blue) !important;
-            color: #ffffff !important;
-        }
-
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
@@ -353,7 +365,6 @@
             align-items: flex-start;
         }
 
-        /* 標籤對齊灰色框左側 */
         .form-group label {
             display: block;
             width: 100%;
@@ -390,20 +401,20 @@
 
     <!-- 右側主區域 -->
     <div class="main-wrapper">
-        <!-- 頂部 Header 欄位 -->
+        <!-- 頂部 Header 欄位（標題與選單同一行） -->
         <div class="top-header">
             <div class="system-title">學生管理面板</div>
             <div class="header-controls">
                 <div class="header-control-group">
-                    <label for="globalSemesterSelect">📅 當前學期：</label>
-                    <select id="globalSemesterSelect" onchange="onGlobalSemesterChange()">
-                        <!-- 動態帶入 -->
+                    <label for="globalSemesterSelect">🗓️ 當前學期：</label>
+                    <select id="globalSemesterSelect">
+                        <option value="113-1">113學年度第1學期</option>
                     </select>
                 </div>
             </div>
         </div>
 
-        <!-- 頁面內容區 -->
+        <!-- 頁面內容區（當學生資料多時自動顯示拉條） -->
         <div class="content-container">
 
             <!-- 1. 全校學生清單與管理頁面 -->
@@ -476,23 +487,23 @@
 
                 <div class="tab-nav">
                     <button class="tab-btn active" id="btn-sec1" onclick="switchTab('sec1')">
-                        壹、能力現況與需求評估 <span id="badge-sec1"></span>
+                        壹、能力現況與需求評估
                     </button>
                     <button class="tab-btn" id="btn-sec2" onclick="switchTab('sec2')">
-                        貳、特教服務與支持策略 <span id="badge-sec2"></span>
+                        貳、特教服務與支持策略
                     </button>
                     <button class="tab-btn" id="btn-sec3" onclick="switchTab('sec3')">
-                        參、教育目標 <span id="badge-sec3"></span>
+                        參、教育目標
                     </button>
                     <button class="tab-btn" id="btn-sec4" onclick="switchTab('sec4')">
-                        肆、行為介入方案 <span id="badge-sec4"></span>
+                        肆、行為介入方案
                     </button>
                     <button class="tab-btn" id="btn-sec5" onclick="switchTab('sec5')">
-                        伍、轉銜服務 <span id="badge-sec5"></span>
+                        伍、轉銜服務
                     </button>
                 </div>
 
-                <form id="iepForm" oninput="updateTabProgress()">
+                <form id="iepForm">
                     <div id="sec1" class="tab-content active">
                         <table>
                             <tr>
@@ -597,7 +608,7 @@
 
                 <div class="form-group">
                     <label for="modal_class">班級：</label>
-                    <input type="text" id="modal_class" placeholder="例：12 (只需輸入班號，不需打年級)">
+                    <input type="text" id="modal_class" placeholder="例：12 ">
                 </div>
             </div>
             <div class="modal-footer">
@@ -608,20 +619,8 @@
     </div>
 
 <script>
-    function getCurrentSemesterKey() {
-        return "113-1";
-    }
-
-    function getCurrentSemesterName() {
-        return "113學年度第1學期";
-    }
-
-    let currentStudentId = null;
-    let currentSemesterKey = "113-1";
-
     window.onload = function() {
         initDatabase();
-        initSemesterDropdown();
         renderStudentTable();
     };
 
@@ -637,48 +636,13 @@
         let db = getDB();
         if (Object.keys(db).length === 0) {
             db = {
-                "110001": {
-                    id: "110001",
-                    name: "張小華",
-                    grade: 1,
-                    classNum: "12",
-                    semesters: {
-                        "113-1": {
-                            student_name: "張小華",
-                            student_id: "110001",
-                            semester_name: "113學年度第1學期",
-                            disability_type: "自閉症"
-                        }
-                    }
-                },
-                "110002": {
-                    id: "110002",
-                    name: "李大明",
-                    grade: 2,
-                    classNum: "03",
-                    semesters: {
-                        "113-1": {
-                            student_name: "李大明",
-                            student_id: "110002",
-                            semester_name: "113學年度第1學期"
-                        }
-                    }
-                }
+                "110001": { id: "110001", name: "張小華", grade: 1, classNum: "12" },
+                "110002": { id: "110002", name: "李大明", grade: 2, classNum: "03" }
             };
             saveDB(db);
         }
     }
 
-    function initSemesterDropdown() {
-        const select = document.getElementById('globalSemesterSelect');
-        select.innerHTML = '';
-        const optCurrent = document.createElement('option');
-        optCurrent.value = "113-1";
-        optCurrent.textContent = "113學年度第1學期";
-        select.appendChild(optCurrent);
-    }
-
-    // 格式化班級顯示（如：112班、203班）
     function formatClassDisplay(grade, classNum) {
         if (!classNum) return '-';
         classNum = String(classNum).trim();
@@ -695,7 +659,6 @@
         return `${classNum}班`;
     }
 
-    // 渲染學生管理表格 (完全對照圖片)
     function renderStudentTable() {
         const db = getDB();
         const tbody = document.getElementById('studentTableBody');
@@ -795,19 +758,7 @@
         }
 
         if (!db[id]) {
-            db[id] = {
-                id: id,
-                name: name,
-                grade: grade,
-                classNum: classNum,
-                semesters: {
-                    "113-1": {
-                        student_name: name,
-                        student_id: id,
-                        semester_name: "113學年度第1學期"
-                    }
-                }
-            };
+            db[id] = { id: id, name: name, grade: grade, classNum: classNum };
         } else {
             db[id].name = name;
             db[id].grade = grade;
@@ -857,7 +808,6 @@
         document.getElementById('btn-' + tabId).classList.add('active');
     }
 
-    function updateTabProgress() {}
     function saveCurrentSemesterData() { alert("儲存成功！"); }
     function generateWordDocument() { alert("匯出 Word"); }
 </script>

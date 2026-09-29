@@ -16,8 +16,8 @@
             --vibrant-yellow: #f1bf43;
             --vibrant-orange: #f38237;
             --vibrant-red: #f84f50;
-            --vibrant-purple: #8A52A5; /* 調淺紫顏色，與圖片一致 */
-            --vibrant-purple-hover: #794394;
+            --vibrant-purple: #9b69b5; /* 淡紫色 Lavender/Soft Purple */
+            --vibrant-purple-hover: #8954a3;
             --complete-blue: #1b5e7d;
             --bg-color: #f1f5f9;
             --border-color: #cbd5e1;
@@ -73,7 +73,7 @@
             padding: 14px 20px;
             color: #94a3b8;
             text-decoration: none;
-            font-size: 15px;
+            font-size: 16px;
             font-weight: bold;
             transition: all 0.2s;
             border-left: 4px solid transparent;
@@ -98,11 +98,11 @@
             overflow: hidden;
         }
 
-        /* 頂部 Header 欄位（標題與學期選單放在同行） */
+        /* 頂部 Header 欄位（完全與照片一致外框） */
         .top-header {
             background-color: #ffffff;
-            min-height: 70px;
-            padding: 0 30px;
+            min-height: 75px;
+            padding: 0 35px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -110,18 +110,19 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.03);
         }
 
+        /* 標題字體加大 */
         .system-title {
-            font-size: 22px;
+            font-size: 24px;
             font-weight: bold;
             color: #1e293b;
         }
 
+        /* 當前學期外圍淡灰框容器 */
         .header-controls {
             display: flex;
             align-items: center;
-            gap: 12px;
             background-color: #f8fafc;
-            padding: 6px 16px;
+            padding: 8px 18px;
             border-radius: 10px;
             border: 1px solid #e2e8f0;
         }
@@ -129,35 +130,39 @@
         .header-control-group {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
+            white-space: nowrap; /* 強制不換行 */
         }
 
         .header-control-group label {
             font-weight: bold;
-            font-size: 14px;
+            font-size: 15px;
             color: #475569;
             margin: 0;
+            white-space: nowrap; /* 強制文字不換行 */
+            display: inline-block;
         }
 
         .header-control-group select {
-            padding: 6px 14px;
+            padding: 6px 16px;
             border-radius: 8px;
             border: 1px solid #cbd5e1;
-            font-size: 14px;
+            font-size: 15px;
             background-color: #ffffff;
             color: #237a9f;
             font-weight: bold;
             cursor: pointer;
+            white-space: nowrap;
         }
 
-        /* 內容容器 Content Container（內建直向拉條/滾動條） */
+        /* 內容容器 Content Container（內建直向滾動條） */
         .content-container {
             flex-grow: 1;
-            padding: 25px;
+            padding: 25px 35px;
             overflow-y: auto; /* 超過頁面時自動出現右側拉條 */
         }
 
-        /* 自訂美化滾動條 Styles */
+        /* 美化滾動條 Styles */
         .content-container::-webkit-scrollbar {
             width: 8px;
         }
@@ -175,7 +180,7 @@
         .page-panel {
             display: none;
             background: #ffffff;
-            padding: 28px;
+            padding: 30px;
             border-radius: 14px;
             box-shadow: 0 4px 16px rgba(0,0,0,0.04);
         }
@@ -188,13 +193,14 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 22px;
+            margin-bottom: 25px;
             padding-bottom: 12px;
             border-bottom: 2px solid #f1f5f9;
         }
 
+        /* 全校學生清單與管理 標題字體 */
         .panel-title {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: bold;
             color: #1e293b;
             margin: 0;
@@ -202,8 +208,8 @@
 
         /* 按鈕樣式 */
         .btn {
-            padding: 9px 18px;
-            font-size: 14px;
+            padding: 9px 20px;
+            font-size: 15px;
             font-weight: bold;
             border-radius: 8px;
             border: none;
@@ -223,22 +229,23 @@
         .btn-warning:hover { background: #d9a832; }
         .btn-danger { background: #f84f50; color: white; }
         .btn-danger:hover { background: #d32f2f; }
+        /* 淺紫按鈕 */
         .btn-purple { background: var(--vibrant-purple); color: white; }
         .btn-purple:hover { background: var(--vibrant-purple-hover); }
         .btn-secondary { background: #64748b; color: white; }
         .btn-secondary:hover { background: #475569; }
 
-        /* 表格樣式 */
+        /* 學生表格字體加大 */
         table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
-            font-size: 15px;
+            font-size: 17px; /* 學生清單內文字加大 */
         }
 
         th, td {
             border: 1px solid #e2e8f0;
-            padding: 12px 16px;
+            padding: 14px 18px;
             vertical-align: middle;
         }
 
@@ -247,14 +254,15 @@
             text-align: center;
             font-weight: bold;
             color: #475569;
+            font-size: 17px; /* 表頭字體加大 */
         }
 
-        /* 年級膠囊 Badge (與圖片樣式一致) */
+        /* 年級膠囊 Badge */
         .badge-pill {
             display: inline-block;
-            padding: 4px 18px;
+            padding: 4px 20px;
             border-radius: 50px;
-            font-size: 13px;
+            font-size: 15px; /* 膠囊文字加大 */
             font-weight: bold;
             text-align: center;
         }
@@ -271,7 +279,7 @@
             box-sizing: border-box;
             font-family: inherit;
             background-color: #f8fafc;
-            font-size: 14px;
+            font-size: 15px;
         }
 
         input[type="text"]:focus, textarea:focus, select:focus {
@@ -283,7 +291,7 @@
 
         textarea { resize: vertical; min-height: 70px; }
 
-        /* 標籤頁 Tabs (IEP 表單內) */
+        /* 標籤頁 Tabs */
         .tab-nav {
             display: flex;
             border-bottom: 3px solid var(--vibrant-blue);
@@ -297,7 +305,7 @@
             border: none;
             background: #e2e8f0;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 15px;
             font-weight: bold;
             color: #475569;
             border-radius: 8px 8px 0 0;
@@ -371,7 +379,7 @@
             text-align: left !important;
             margin-bottom: 6px;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 15px;
             color: #475569;
         }
 
@@ -401,7 +409,7 @@
 
     <!-- 右側主區域 -->
     <div class="main-wrapper">
-        <!-- 頂部 Header 欄位（標題與選單同一行） -->
+        <!-- 頂部 Header 欄位（單行完全貼合照片） -->
         <div class="top-header">
             <div class="system-title">學生管理面板</div>
             <div class="header-controls">
@@ -421,7 +429,7 @@
             <div id="page-student" class="page-panel active">
                 <div class="panel-header">
                     <h2 class="panel-title">全校學生清單與管理</h2>
-                    <div style="display: flex; gap: 10px;">
+                    <div style="display: flex; gap: 12px;">
                         <button class="btn btn-purple" onclick="batchUpgradeGrade()">🚀 整批升級年段</button>
                         <button class="btn btn-primary" onclick="openStudentModal()">+ 新增學生</button>
                     </div>
@@ -448,7 +456,7 @@
                 <div class="panel-header">
                     <h2 class="panel-title">特殊需求領域課程目標與能力指標庫</h2>
                 </div>
-                <p style="color: #64748b;">在此管理特需領域（如：生活管理、社會技巧、學習策略、職業教育）之範本目標，方便於 IEP 內直接引用。</p>
+                <p style="color: #64748b; font-size: 16px;">在此管理特需領域（如：生活管理、社會技巧、學習策略、職業教育）之範本目標，方便於 IEP 內直接引用。</p>
                 
                 <table>
                     <thead>
@@ -464,13 +472,13 @@
                             <td><strong>生活管理</strong></td>
                             <td>個人衛生與生活自理、時間管理策略</td>
                             <td>能於每日晨會前完成個人物品整理並簽到</td>
-                            <td><button class="btn btn-secondary" style="padding: 4px 8px; font-size: 12px;">編輯</button></td>
+                            <td><button class="btn btn-secondary" style="padding: 4px 10px; font-size: 13px;">編輯</button></td>
                         </tr>
                         <tr>
                             <td><strong>社會技巧</strong></td>
                             <td>情緒覺察與表達、人際互動技巧</td>
                             <td>當感到焦慮時，能使用口語或圖卡向教師表達暫離需求</td>
-                            <td><button class="btn btn-secondary" style="padding: 4px 8px; font-size: 12px;">編輯</button></td>
+                            <td><button class="btn btn-secondary" style="padding: 4px 10px; font-size: 13px;">編輯</button></td>
                         </tr>
                     </tbody>
                 </table>
@@ -480,7 +488,7 @@
             <div id="page-iep" class="page-panel">
                 <div class="panel-header">
                     <h2 class="panel-title">個別化教育計畫 (IEP) 表單填寫</h2>
-                    <span id="currentEditingStudentBadge" style="font-size: 14px; background: #e2e8f0; padding: 4px 12px; border-radius: 20px; font-weight: bold; color: #334155;">
+                    <span id="currentEditingStudentBadge" style="font-size: 15px; background: #e2e8f0; padding: 4px 14px; border-radius: 20px; font-weight: bold; color: #334155;">
                         尚未選擇學生
                     </span>
                 </div>
@@ -608,7 +616,7 @@
 
                 <div class="form-group">
                     <label for="modal_class">班級：</label>
-                    <input type="text" id="modal_class" placeholder="例：12 ">
+                    <input type="text" id="modal_class" placeholder="例：12 (只需輸入班號，不需打年級)">
                 </div>
             </div>
             <div class="modal-footer">
@@ -676,13 +684,13 @@
 
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td style="text-align: center; font-weight: bold; font-size: 15px;">${student.id}</td>
-                <td style="text-align: center; font-size: 15px;">${student.name}</td>
+                <td style="text-align: center; font-weight: bold;">${student.id}</td>
+                <td style="text-align: center;">${student.name}</td>
                 <td style="text-align: center;">${gradeBadges[student.grade] || gradeBadges[1]}</td>
-                <td style="text-align: center; font-size: 15px;">${formatClassDisplay(student.grade, student.classNum)}</td>
+                <td style="text-align: center;">${formatClassDisplay(student.grade, student.classNum)}</td>
                 <td style="text-align: center;">
-                    <button class="btn btn-primary" style="padding: 5px 12px; font-size: 13px;" onclick="openStudentModal('${student.id}')">✏️ 編輯</button>
-                    <button class="btn btn-danger" style="padding: 5px 12px; font-size: 13px; margin-left: 6px;" onclick="deleteStudent('${student.id}')">🗑️ 刪除</button>
+                    <button class="btn btn-primary" style="padding: 6px 14px; font-size: 14px;" onclick="openStudentModal('${student.id}')">✏️ 編輯</button>
+                    <button class="btn btn-danger" style="padding: 6px 14px; font-size: 14px; margin-left: 6px;" onclick="deleteStudent('${student.id}')">🗑️ 刪除</button>
                 </td>
             `;
             tbody.appendChild(tr);

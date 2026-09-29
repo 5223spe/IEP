@@ -98,7 +98,7 @@
             overflow: hidden;
         }
 
-        /* 頂部 Header 欄位（完全與照片一致外框） */
+        /* 頂部 Header 欄位 */
         .top-header {
             background-color: #ffffff;
             min-height: 75px;
@@ -110,14 +110,12 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.03);
         }
 
-        /* 標題字體加大 */
         .system-title {
             font-size: 24px;
             font-weight: bold;
             color: #1e293b;
         }
 
-        /* 當前學期外圍淡灰框容器 */
         .header-controls {
             display: flex;
             align-items: center;
@@ -131,7 +129,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            white-space: nowrap; /* 強制不換行 */
+            white-space: nowrap;
         }
 
         .header-control-group label {
@@ -139,7 +137,7 @@
             font-size: 15px;
             color: #475569;
             margin: 0;
-            white-space: nowrap; /* 強制文字不換行 */
+            white-space: nowrap;
             display: inline-block;
         }
 
@@ -155,14 +153,13 @@
             white-space: nowrap;
         }
 
-        /* 內容容器 Content Container（內建直向滾動條） */
+        /* 內容容器 Content Container */
         .content-container {
             flex-grow: 1;
             padding: 25px 35px;
-            overflow-y: auto; /* 超過頁面時自動出現右側拉條 */
+            overflow-y: auto;
         }
 
-        /* 美化滾動條 Styles */
         .content-container::-webkit-scrollbar {
             width: 8px;
         }
@@ -198,7 +195,6 @@
             border-bottom: 2px solid #f1f5f9;
         }
 
-        /* 全校學生清單與管理 標題字體 */
         .panel-title {
             font-size: 22px;
             font-weight: bold;
@@ -229,18 +225,16 @@
         .btn-warning:hover { background: #d9a832; }
         .btn-danger { background: #f84f50; color: white; }
         .btn-danger:hover { background: #d32f2f; }
-        /* 淺紫按鈕 */
         .btn-purple { background: var(--vibrant-purple); color: white; }
         .btn-purple:hover { background: var(--vibrant-purple-hover); }
         .btn-secondary { background: #64748b; color: white; }
         .btn-secondary:hover { background: #475569; }
 
-        /* 學生表格字體加大 */
         table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
-            font-size: 17px; /* 學生清單內文字加大 */
+            font-size: 15px;
         }
 
         th, td {
@@ -254,15 +248,14 @@
             text-align: center;
             font-weight: bold;
             color: #475569;
-            font-size: 17px; /* 表頭字體加大 */
+            font-size: 17px;
         }
 
-        /* 年級膠囊 Badge */
         .badge-pill {
             display: inline-block;
             padding: 4px 20px;
             border-radius: 50px;
-            font-size: 15px; /* 膠囊文字加大 */
+            font-size: 15px;
             font-weight: bold;
             text-align: center;
         }
@@ -291,7 +284,6 @@
 
         textarea { resize: vertical; min-height: 70px; }
 
-        /* 標籤頁 Tabs */
         .tab-nav {
             display: flex;
             border-bottom: 3px solid var(--vibrant-blue);
@@ -333,7 +325,6 @@
             border-radius: 0 0 12px 12px;
         }
 
-        /* Modal 對話框 */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -409,7 +400,7 @@
 
     <!-- 右側主區域 -->
     <div class="main-wrapper">
-        <!-- 頂部 Header 欄位（單行完全貼合照片） -->
+        <!-- 頂部 Header 欄位（新增 113-1 至 115-2 學期） -->
         <div class="top-header">
             <div class="system-title">學生管理面板</div>
             <div class="header-controls">
@@ -417,12 +408,17 @@
                     <label for="globalSemesterSelect">🗓️ 當前學期：</label>
                     <select id="globalSemesterSelect">
                         <option value="113-1">113學年度第1學期</option>
+                        <option value="113-2">113學年度第2學期</option>
+                        <option value="114-1">114學年度第1學期</option>
+                        <option value="114-2">114學年度第2學期</option>
+                        <option value="115-1" selected>115學年度第1學期</option>
+                        <option value="115-2">115學年度第2學期</option>
                     </select>
                 </div>
             </div>
         </div>
 
-        <!-- 頁面內容區（當學生資料多時自動顯示拉條） -->
+        <!-- 頁面內容區 -->
         <div class="content-container">
 
             <!-- 1. 全校學生清單與管理頁面 -->
@@ -616,7 +612,7 @@
 
                 <div class="form-group">
                     <label for="modal_class">班級：</label>
-                    <input type="text" id="modal_class" placeholder="例：12 (只需輸入班號，不需打年級)">
+                    <input type="text" id="modal_class" placeholder="例：12 ">
                 </div>
             </div>
             <div class="modal-footer">

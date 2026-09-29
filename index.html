@@ -449,7 +449,7 @@
             font-weight: bold;
             font-size: 13px;
             color: #475569;
-        }
+            text-align: left;        }
 
         .modal-footer {
             display: flex;
@@ -718,15 +718,15 @@
             <label>
                 年級：
                 <select id="modalStudentGrade">
-                    <option value="1">高一 (1年級)</option>
-                    <option value="2">高二 (2年級)</option>
-                    <option value="3">高三 (3年級)</option>
-                    <option value="4">已畢業</option>
+                    <option value="1">高一</option>
+                    <option value="2">高二</option>
+                    <option value="3">高三</option>
+                    <option value="4">畢業/結業</option>
                 </select>
             </label>
             <label>
                 班級：
-                <input type="text" id="modalStudentClass" placeholder="例如：101班 或 305班">
+                <input type="text" id="modalStudentClass" placeholder="例如：12 或 05 (填寫班號即可)">
             </label>
         </div>
         <div class="modal-footer">
@@ -934,17 +934,28 @@
             1: '<span class="badge-grade grade-1">高一</span>',
             2: '<span class="badge-grade grade-2">高二</span>',
             3: '<span class="badge-grade grade-3">高三</span>',
-            4: '<span class="badge-grade grade-grad">已畢業</span>'
+            4: '<span class="badge-grade grade-grad">畢業/結業</span>'
         };
 
         for (let id in db) {
             const s = db[id];
+            
+            // 處理班級顯示邏輯：若只有1-2位數字(如 12)，自動結合年級數字組合成完整班號(如 112)
+            let displayClass = s.className || '未設定';
+            if (s.className && /^\d{1,2}$/.test(s.className.trim())) {
+                const gradeNum = s.grade || 1;
+                const paddedClass = s.className.trim().padStart(2, '0');
+                displayClass = `${gradeNum}${paddedClass}班`;
+            } else if (s.className) {
+                displayClass = s.className.endsWith('班') ? s.className : `${s.className}班`;
+            }
+
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td><b>${s.id}</b></td>
                 <td>${s.name}</td>
                 <td>${gradeLabels[s.grade] || s.grade}</td>
-                <td>${s.className || '未設定'}</td>
+                <td>${displayClass}</td>
                 <td>
                     <button class="btn-sm btn-primary" onclick="editStudent('${s.id}')">✏️ 編輯</button>
                     <button class="btn-sm btn-danger" onclick="deleteStudent('${s.id}')">🗑️ 刪除</button>

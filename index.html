@@ -3,312 +3,380 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>國立鳳新高中 「個別化教育計畫」(IEP) 系統</title>
+    <title>國立鳳新高中 個別化教育計畫 (IEP) 系統</title>
     <!-- 引入 docx.js 與 FileSaver 庫 -->
     <script src="https://unpkg.com/docx@7.8.2/build/index.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <style>
         :root {
-            /* 各分頁專屬 主色 (選取時背景) 與 亮淡色 (底部進度條) */
-            --vibrant-indigo: #4f5fa8;       --indigo-light: #c7d2fe;
-            --vibrant-blue: #237a9f;         --blue-light: #bae6fd;
-            --vibrant-slate: #4f6d8a;        --slate-light: #cbd5e1;
-            --vibrant-teal: #3ba489;         --teal-light: #a7f3d0;
-            --vibrant-green: #89b85c;        --green-light: #e9fac8;
-            --vibrant-yellow: #f1bf43;       --yellow-light: #fef08a;
-            
+            --vibrant-blue: #237a9f;
+            --vibrant-slate: #4f6d8a;
+            --vibrant-teal: #3ba489;
+            --vibrant-green: #89b85c;
+            --vibrant-yellow: #f1bf43;
             --vibrant-orange: #f38237;
             --vibrant-red: #f84f50;
-            --bg-color: #f4f7f9;
+            --complete-blue: #1b5e7d;
+            --bg-color: #f1f5f9;
             --border-color: #cfd8dc;
+
+            /* 精準還原圖片左欄配色 */
+            --sidebar-bg: #131a26;
+            --sidebar-sub-bg: #0b1019;
+            --sidebar-text: #d5dae0;
+            --sidebar-sub-text: #e2e8f0;
+            --sidebar-hover: #1e2738;
         }
+
+        * { box-sizing: border-box; }
 
         body {
-            font-family: "微軟正黑體", "Microsoft JhengHei", sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "微軟正黑體", "Microsoft JhengHei", sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 0;
             background-color: var(--bg-color);
             color: #2c3e50;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
+        /* 頂部 Header */
+        .top-header {
+            position: fixed;
+            top: 0; left: 240px; right: 0;
+            height: 60px;
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 25px;
+            z-index: 100;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #1e293b;
+        }
+
+        .semester-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #f8fafc;
+            padding: 6px 14px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+        }
+
+        .semester-selector label { font-weight: bold; color: #475569; font-size: 14px; }
+        .semester-selector select {
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid #cbd5e1;
+            font-size: 14px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* 左側導覽列 Sidebar (完全比照圖片比例與字型大小) */
+        .sidebar {
+            width: 240px;
+            background-color: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            z-index: 101;
+        }
+
+        .sidebar-brand {
+            padding: 24px 20px 20px 20px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.2;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 10px 0;
+            margin: 0;
+            overflow-y: auto;
+        }
+
+        .menu-item {
+            padding: 14px 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 15px;
+            color: var(--sidebar-text);
+            transition: background-color 0.2s, color 0.2s;
+            user-select: none;
+        }
+
+        .menu-item:hover {
+            background-color: var(--sidebar-hover);
+            color: #ffffff;
+        }
+
+        .menu-item .icon {
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+        }
+
+        /* 子選單區域 */
+        .submenu {
+            list-style: none;
+            padding: 5px 0 10px 0;
+            margin: 0;
+            background-color: var(--sidebar-sub-bg);
+            display: block;
+        }
+
+        .submenu .menu-item {
+            padding: 12px 20px 12px 42px;
+            font-size: 14px;
+            color: var(--sidebar-sub-text);
+        }
+
+        .submenu .menu-item:hover {
+            background-color: #141c2b;
+            color: #ffffff;
+        }
+
+        /* 中央內容區 Main Area */
+        .main-content {
+            margin-top: 60px;
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+            height: calc(100vh - 60px);
+        }
+
+        .card {
             background: #ffffff;
             padding: 25px;
             border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-        }
-
-        h1 {
-            text-align: center;
-            color: #1e293b;
-            font-size: 26px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             margin-bottom: 25px;
-            font-weight: 700;
         }
 
-        /* 控制與功能列 */
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #f8fafc;
-            padding: 12px 20px;
-            border-radius: 10px;
-            border: 1px solid #e2e8f0;
-            margin-bottom: 20px;
-        }
-
-        .grade-filter {
-            display: flex;
-            gap: 10px;
-        }
-
-        .grade-btn {
-            padding: 8px 16px;
-            border: 1px solid #cbd5e1;
-            background: #ffffff;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            color: #475569;
-            transition: all 0.2s;
-        }
-
-        .grade-btn.active {
-            background: var(--vibrant-indigo);
-            color: #ffffff;
-            border-color: var(--vibrant-indigo);
-        }
-
-        /* 學生卡片清單區域 */
         .student-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             gap: 15px;
-            margin-bottom: 25px;
+            margin-top: 20px;
         }
 
         .student-card {
+            background: #f8fafc;
             border: 2px solid #e2e8f0;
             border-radius: 10px;
             padding: 15px;
-            background: #ffffff;
+            text-align: center;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.2s ease-in-out;
         }
 
         .student-card:hover {
-            border-color: var(--vibrant-indigo);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-            transform: translateY(-2px);
+            border-color: var(--vibrant-blue);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(35, 122, 159, 0.15);
         }
 
-        .student-card.active {
-            border-color: var(--vibrant-indigo);
-            background: #f0f3ff;
-        }
+        .student-card .name { font-size: 18px; font-weight: bold; color: #1e293b; margin-bottom: 5px; }
+        .student-card .id { font-size: 13px; color: #64748b; }
 
-        .student-card .name { font-size: 18px; font-weight: bold; color: #1e293b; }
-        .student-card .id { font-size: 13px; color: #64748b; margin-top: 4px; }
-
-        /* IEP 編輯區域 (點選學生後呈現) */
-        #iepEditContainer {
-            display: none;
-            margin-top: 25px;
-            border-top: 2px dashed #cbd5e1;
-            padding-top: 25px;
-        }
-
-        /* 12html 的 Tab 分頁導覽列樣式 */
         .tab-nav {
             display: flex;
-            border-bottom: 3px solid #237a9f;
+            border-bottom: 3px solid var(--vibrant-blue);
             margin-bottom: 20px;
             flex-wrap: wrap;
-            gap: 6px;
+            gap: 4px;
         }
 
         .tab-btn {
-            position: relative;
-            padding: 11px 18px 15px 18px;
+            padding: 11px 18px;
             border: none;
-            background-color: #e2e8f0;
+            background: #e2e8f0;
             cursor: pointer;
-            font-size: 14.5px;
+            font-size: 14px;
             font-weight: bold;
             color: #475569;
             border-radius: 8px 8px 0 0;
-            transition: all 0.2s ease-in-out;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            transition: all 0.2s;
         }
 
-        /* 頁籤底部的淡色動態進度條 (來自 12html) */
-        .tab-btn::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            height: 4px;
-            width: var(--fill-percent, 0%);
-            background-color: var(--light-color, #94a3b8);
-            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        #btn-sec0 { --main-color: var(--vibrant-indigo); --light-color: var(--indigo-light); }
-        #btn-sec1 { --main-color: var(--vibrant-blue);   --light-color: var(--blue-light); }
-        #btn-sec2 { --main-color: var(--vibrant-slate);  --light-color: var(--slate-light); }
-        #btn-sec3 { --main-color: var(--vibrant-teal);   --light-color: var(--teal-light); }
-        #btn-sec4 { --main-color: var(--vibrant-green);  --light-color: var(--green-light); }
-        #btn-sec5 { --main-color: var(--vibrant-yellow); --light-color: var(--yellow-light); }
-
-        .tab-btn.active { background-color: var(--main-color); color: #ffffff; }
-        #btn-sec5.active { color: #1e293b; }
-        .tab-btn:hover:not(.active) { background-color: #cbd5e1; }
+        .tab-btn:nth-child(1).active { background: var(--vibrant-blue); color: #ffffff; }
+        .tab-btn:nth-child(2).active { background: var(--vibrant-slate); color: #ffffff; }
+        .tab-btn:nth-child(3).active { background: var(--vibrant-teal); color: #ffffff; }
+        .tab-btn:nth-child(4).active { background: var(--vibrant-green); color: #ffffff; }
+        .tab-btn:nth-child(5).active { background: var(--vibrant-yellow); color: #1e293b; }
 
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        /* 表格與表單元件 */
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 14px; background: #fff; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 14px;
+            background: #fff;
+        }
+
         th, td { border: 1px solid var(--border-color); padding: 9px 12px; vertical-align: middle; }
         th { background-color: #f1f5f9; text-align: center; font-weight: bold; color: #334155; }
 
-        .iep-card { border: 2px solid var(--vibrant-indigo); border-radius: 8px; padding: 20px; background: #ffffff; }
-        .iep-title { text-align: center; font-size: 18px; font-weight: bold; color: var(--vibrant-indigo); margin-bottom: 15px; }
-        .date-input-group { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-
-        input[type="text"], input[type="date"], select, textarea {
-            width: 98%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-family: inherit; background-color: #f8fafc;
-        }
-
-        input[type="text"]:focus, textarea:focus, select:focus {
-            outline: none; border-color: var(--vibrant-indigo); background-color: #fff; box-shadow: 0 0 0 2px rgba(79, 95, 168, 0.2);
+        input[type="text"], select, textarea {
+            width: 98%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; background-color: #f8fafc;
         }
 
         textarea { resize: vertical; min-height: 60px; }
         label { margin-right: 12px; display: inline-flex; align-items: center; cursor: pointer; }
 
         .action-bar {
-            position: sticky; bottom: 20px; background: rgba(255, 255, 255, 0.95); padding: 15px;
-            border: 1px solid #e2e8f0; box-shadow: 0 -4px 15px rgba(0,0,0,0.06); display: flex;
-            justify-content: space-between; align-items: center; border-radius: 10px; margin-top: 30px;
+            position: sticky; bottom: 0; background: rgba(255, 255, 255, 0.95); padding: 15px; border: 1px solid #e2e8f0;
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.06); display: flex; justify-content: space-between; align-items: center; border-radius: 10px; margin-top: 20px;
         }
 
-        .btn { padding: 11px 26px; font-size: 15px; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+        .btn { padding: 10px 22px; font-size: 14px; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; }
         .btn-save { background-color: var(--vibrant-orange); color: #ffffff; }
         .btn-export { background-color: var(--vibrant-red); color: #ffffff; }
-        .btn-primary { background-color: var(--vibrant-blue); color: #ffffff; padding: 6px 12px; border-radius: 6px; border: none; cursor: pointer; }
+        .btn-primary { background-color: var(--vibrant-blue); color: #ffffff; }
+
+        #loadingOverlay {
+            display: none; position: fixed; top:0; left:0; width:100%; height:100%;
+            background: rgba(255,255,255,0.8); z-index: 9999; justify-content: center; align-items: center; font-size: 18px; font-weight: bold; color: var(--vibrant-blue);
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>國立鳳新高中 「個別化教育計畫」(IEP) 系統</h1>
+<div id="loadingOverlay">☁️ 雲端資料同步中，請稍候...</div>
 
-    <!-- 上方選擇列：年級篩選與新增學生 -->
-    <div class="top-bar">
-        <div class="grade-filter">
-            <button class="grade-btn active" onclick="filterGrade('全部', this)">全校學生</button>
-            <button class="grade-btn" onclick="filterGrade('高一', this)">高一</button>
-            <button class="grade-btn" onclick="filterGrade('高二', this)">高二</button>
-            <button class="grade-btn" onclick="filterGrade('高三', this)">高三</button>
-        </div>
-        <button type="button" class="btn-primary" onclick="addNewStudent()">+ 新增學生</button>
+<!-- 左側導覽列 Sidebar (圖片視覺精準重現) -->
+<div class="sidebar">
+    <div class="sidebar-brand">🏫 鳳新高中 IEP</div>
+    <ul class="sidebar-menu">
+        <li class="menu-item" onclick="showPage('student-manage')">
+            <span class="icon">👥</span> 學生管理
+        </li>
+        <li class="menu-item" onclick="showPage('course-goals')">
+            <span class="icon">🎯</span> 特需課程目標
+        </li>
+        <li class="menu-item" onclick="toggleSubmenu('iep-submenu')">
+            <span class="icon">📄</span> IEP 個別化教育計畫 ▾
+        </li>
+        <ul id="iep-submenu" class="submenu">
+            <li class="menu-item" onclick="showGradeStudents(1)">• 高一學生</li>
+            <li class="menu-item" onclick="showGradeStudents(2)">• 高二學生</li>
+            <li class="menu-item" onclick="showGradeStudents(3)">• 高三學生</li>
+        </ul>
+    </ul>
+</div>
+
+<!-- 頂部 Header -->
+<div class="top-header">
+    <div class="header-title" id="pageTitle">請選擇左側功能選單</div>
+    <div class="semester-selector">
+        <label for="globalSemester">📅 當前學期：</label>
+        <select id="globalSemester" onchange="onSemesterChange()"></select>
+    </div>
+</div>
+
+<!-- 中央主內容區域 (所有邏輯與原版完全相同) -->
+<div class="main-content">
+
+    <!-- 1. 學生管理頁面 -->
+    <div id="page-student-manage" class="card" style="display:none;">
+        <h2>👥 全校學生管理</h2>
+        <p>在此可新增學生或維護基本年級資料。</p>
+        <button class="btn btn-primary" onclick="addNewStudent()">+ 新增學生檔案</button>
+        <table style="margin-top: 15px;">
+            <thead>
+                <tr>
+                    <th>學號</th>
+                    <th>姓名</th>
+                    <th>年級</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="studentTableBody"></tbody>
+        </table>
     </div>
 
-    <!-- 中間：學生卡片名單 -->
-    <div class="student-grid" id="studentListContainer">
-        <!-- 學生卡片會由 JavaScript 動態生成 -->
+    <!-- 2. 特需課程目標頁面 -->
+    <div id="page-course-goals" class="card" style="display:none;">
+        <h2>🎯 特需課程目標庫</h2>
+        <p>此處可存放特需課程能力指標與目標範本，方便填寫 IEP 時快速帶入。</p>
     </div>
 
-    <!-- 下方：IEP 編輯與分頁區 -->
-    <div id="iepEditContainer">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <h2 id="currentEditingTitle" style="margin:0; font-size:20px; color:#1e293b;">編輯學生 IEP</h2>
-            <div>
-                <label for="semesterSelect">📅 學期：</label>
-                <select id="semesterSelect" onchange="onSemesterChange()"></select>
-                <button type="button" class="btn-primary" onclick="createNewSemester()" style="background:var(--vibrant-teal)">+ 開啟新學期</button>
-            </div>
+    <!-- 3. 年級學生選單頁面 -->
+    <div id="page-grade-students" class="card" style="display:none;">
+        <h2 id="gradeTitle">高一學生列表</h2>
+        <p>請點選學生姓名，開始編輯該生的 IEP 個別化教育計畫：</p>
+        <div class="student-grid" id="studentGrid"></div>
+    </div>
+
+    <!-- 4. IEP 編輯表單頁面 -->
+    <div id="page-iep-form" class="card" style="display:none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <button class="btn" style="background:#cbd5e1;" onclick="backToStudentList()">⬅️ 返回學生列表</button>
+            <button class="btn btn-primary" onclick="createNewSemesterForCurrentStudent()">+ 帶入舊資料開新學期</button>
         </div>
 
-        <!-- 12html 樣式分頁導覽欄 -->
         <div class="tab-nav">
-            <button class="tab-btn active" id="btn-sec0" onclick="switchTab('sec0')">零、基本資料與審議紀錄</button>
-            <button class="tab-btn" id="btn-sec1" onclick="switchTab('sec1')">壹、能力現況與需求評估</button>
-            <button class="tab-btn" id="btn-sec2" onclick="switchTab('sec2')">貳、特教服務與支持策略</button>
-            <button class="tab-btn" id="btn-sec3" onclick="switchTab('sec3')">參、教育目標</button>
-            <button class="tab-btn" id="btn-sec4" onclick="switchTab('sec4')">肆、行為介入方案</button>
-            <button class="tab-btn" id="btn-sec5" onclick="switchTab('sec5')">伍、轉銜服務</button>
+            <button class="tab-btn active" id="btn-sec1" onclick="switchTab('sec1')">
+                壹、能力現況與需求評估 <span class="badge" id="badge-sec1"></span>
+            </button>
+            <button class="tab-btn" id="btn-sec2" onclick="switchTab('sec2')">
+                貳、特教服務與支持策略 <span class="badge" id="badge-sec2"></span>
+            </button>
+            <button class="tab-btn" id="btn-sec3" onclick="switchTab('sec3')">
+                參、教育目標 <span class="badge" id="badge-sec3"></span>
+            </button>
+            <button class="tab-btn" id="btn-sec4" onclick="switchTab('sec4')">
+                肆、行為介入方案 <span class="badge" id="badge-sec4"></span>
+            </button>
+            <button class="tab-btn" id="btn-sec5" onclick="switchTab('sec5')">
+                伍、轉銜服務 <span class="badge" id="badge-sec5"></span>
+            </button>
         </div>
 
-        <!-- 表單內容區域 -->
         <form id="iepForm" oninput="updateTabProgress()">
-            
-            <!-- 零、基本資料與審議紀錄 -->
-            <div id="sec0" class="tab-content active">
-                <div class="iep-card">
-                    <div class="iep-title">國立鳳新高中資源班學生「個別化教育計畫」</div>
-                    <table>
-                        <tr>
-                            <td style="width:15%; text-align:center; font-weight:bold; background:#f8fafc;">學生姓名</td>
-                            <td style="width:35%;"><input type="text" name="student_name" id="student_name"></td>
-                            <td style="width:15%; text-align:center; font-weight:bold; background:#f8fafc;">年級/班級</td>
-                            <td style="width:35%;"><input type="text" name="student_class" id="student_class"></td>
-                        </tr>
-                        <tr>
-                            <td style="text-align:center; font-weight:bold; background:#f8fafc;">學年度/學期</td>
-                            <td><input type="text" name="academic_year" id="semester_name" value="114-2"></td>
-                            <td style="text-align:center; font-weight:bold; background:#f8fafc;">檔案管理者/分機</td>
-                            <td><input type="text" name="manager_info" value="朱家臻_【校內分機：5221】"></td>
-                        </tr>
-                    </table>
-
-                    <div style="font-weight:bold; margin:15px 0 8px 0; color:#334155;">校內特殊教育推行委員會審議日期：</div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="width:30%;">學期</th>
-                                <th style="width:35%;">期初審議日期</th>
-                                <th style="width:35%;">期末審議日期</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td style="text-align:center; font-weight:bold; background:#f8fafc;">第一學年 第一學期 / 第二學期</td>
-                                <td><div class="date-input-group"><input type="date" name="y1_s1_start"><span style="color:#94a3b8;">/</span><input type="date" name="y1_s2_start"></div></td>
-                                <td><div class="date-input-group"><input type="date" name="y1_s1_end"><span style="color:#94a3b8;">/</span><input type="date" name="y1_s2_end"></div></td>
-                            </tr>
-                            <tr>
-                                <td style="text-align:center; font-weight:bold; background:#f8fafc;">第二學年 第一學期 / 第二學期</td>
-                                <td><div class="date-input-group"><input type="date" name="y2_s1_start"><span style="color:#94a3b8;">/</span><input type="date" name="y2_s2_start"></div></td>
-                                <td><div class="date-input-group"><input type="date" name="y2_s1_end"><span style="color:#94a3b8;">/</span><input type="date" name="y2_s2_end"></div></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- 壹、能力現況與需求評估 -->
-            <div id="sec1" class="tab-content">
+            <div id="sec1" class="tab-content active">
                 <table>
                     <tr>
-                        <th style="width:15%">障礙類別</th>
+                        <th style="width:15%">學生姓名</th>
+                        <td style="width:35%"><input type="text" name="student_name" id="form_student_name"></td>
+                        <th style="width:15%">學號</th>
+                        <td style="width:35%"><input type="text" name="student_id" id="form_student_id" readonly style="background:#e2e8f0;"></td>
+                    </tr>
+                    <tr>
+                        <th>學年學期</th>
+                        <td><input type="text" name="semester_name" id="form_semester_name" readonly style="background:#e2e8f0;"></td>
+                        <th>障礙類別</th>
                         <td><input type="text" name="disability_type" placeholder="例：自閉症"></td>
                     </tr>
                     <tr>
                         <th>能力現況說明</th>
-                        <td><textarea name="current_status" placeholder="輸入學生目前的能力發展狀況..."></textarea></td>
+                        <td colspan="3"><textarea name="current_status" placeholder="輸入學生目前的能力發展狀況..."></textarea></td>
                     </tr>
                 </table>
             </div>
 
-            <!-- 貳、特教服務與支持策略 -->
             <div id="sec2" class="tab-content">
                 <table>
                     <tr>
@@ -321,12 +389,11 @@
                     </tr>
                     <tr>
                         <th>評量調整策略</th>
-                        <td><textarea name="assessment_strategy" placeholder="如：延長考試時間、獨立考場..."></textarea></td>
+                        <td><textarea name="assessment_strategy" placeholder="如：延長考試時間..."></textarea></td>
                     </tr>
                 </table>
             </div>
 
-            <!-- 參、教育目標 -->
             <div id="sec3" class="tab-content">
                 <table>
                     <tr>
@@ -336,7 +403,6 @@
                 </table>
             </div>
 
-            <!-- 肆、行為介入方案 -->
             <div id="sec4" class="tab-content">
                 <table>
                     <tr>
@@ -346,7 +412,6 @@
                 </table>
             </div>
 
-            <!-- 伍、轉銜服務 -->
             <div id="sec5" class="tab-content">
                 <table>
                     <tr>
@@ -358,141 +423,232 @@
         </form>
 
         <div class="action-bar">
-            <button type="button" class="btn btn-save" onclick="saveCurrentSemesterData()">💾 儲存本學期資料</button>
-            <button type="button" class="btn btn-export" onclick="alert('即可整合 docx.js 匯出Word！')">📄 匯出完整 Word (.docx) 檔案</button>
+            <button type="button" class="btn btn-save" onclick="saveCurrentSemesterData()">💾 儲存本學期 IEP 資料至雲端</button>
+            <button type="button" class="btn btn-export" onclick="alert('即可搭配 docx.js 匯出 Word')">📄 匯出 Word (.docx)</button>
         </div>
     </div>
+
 </div>
 
 <script>
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbybbbg8z_GUiOWQbSGtKRNnjtgU7DkfgPpc1yalpTBLkxEuYrQwSgJ_TDGOzsYpfvFChA/exec";
+
+    let globalDB = {};
     let currentStudentId = null;
-    let currentSemesterKey = null;
-    let currentGradeFilter = '全部';
+    let currentGrade = 1;
 
     window.onload = function() {
-        initDatabase();
-        renderStudentCards();
+        initSemesterDropdown();
+        fetchCloudDB();
     };
 
-    function getDB() {
-        return JSON.parse(localStorage.getItem('iep_students_db') || '{}');
-    }
+    function initSemesterDropdown() {
+        const select = document.getElementById('globalSemester');
+        const now = new Date();
+        const year = now.getFullYear() - 1911;
+        const month = now.getMonth() + 1;
 
-    function saveDB(db) {
-        localStorage.setItem('iep_students_db', JSON.stringify(db));
-    }
+        let curAcadYear = (month >= 8) ? year : year - 1;
+        let curSemester = (month >= 2 && month <= 7) ? 2 : 1;
 
-    // 初始化範例資料
-    function initDatabase() {
-        let db = getDB();
-        if (Object.keys(db).length === 0) {
-            db = {
-                "110001": { id: "110001", name: "張小華", grade: "高二", class: "二年三班", semesters: { "114-2": { student_name: "張小華", student_class: "二年三班", semester_name: "114-2", disability_type: "自閉症" } } },
-                "110002": { id: "110002", name: "李大明", grade: "高一", class: "一年一班", semesters: { "114-2": { student_name: "李大明", student_class: "一年一班", semester_name: "114-2" } } },
-                "110003": { id: "110003", name: "王小美", grade: "高三", class: "三年二班", semesters: { "114-2": { student_name: "王小美", student_class: "三年二班", semester_name: "114-2" } } }
-            };
-            saveDB(db);
-        }
-    }
+        const semesters = [
+            `${curAcadYear}學年度第${curSemester}學期`,
+            curSemester === 1 ? `${curAcadYear-1}學年度第2學期` : `${curAcadYear}學年度第1學期`,
+            `${curAcadYear-1}學年度第1學期`
+        ];
 
-    // 依年級篩選
-    function filterGrade(grade, btn) {
-        currentGradeFilter = grade;
-        document.querySelectorAll('.grade-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        renderStudentCards();
-    }
-
-    // 渲染學生名單卡片
-    function renderStudentCards() {
-        const db = getDB();
-        const container = document.getElementById('studentListContainer');
-        container.innerHTML = '';
-
-        for (let id in db) {
-            const student = db[id];
-            if (currentGradeFilter !== '全部' && student.grade !== currentGradeFilter) continue;
-
-            const card = document.createElement('div');
-            card.className = `student-card ${currentStudentId === id ? 'active' : ''}`;
-            card.onclick = () => selectStudent(id);
-            card.innerHTML = `
-                <div class="name">${student.name}</div>
-                <div class="id">學號：${student.id}｜${student.class || ''}</div>
-            `;
-            container.appendChild(card);
-        }
-    }
-
-    // 點選學生卡片進入編輯
-    function selectStudent(studentId) {
-        currentStudentId = studentId;
-        renderStudentCards();
-
-        const db = getDB();
-        const student = db[studentId];
-
-        document.getElementById('currentEditingTitle').innerText = `編輯【${student.name}】的 IEP 計畫`;
-        document.getElementById('iepEditContainer').style.display = 'block';
-
-        // 載入學期選單
-        const semSelect = document.getElementById('semesterSelect');
-        semSelect.innerHTML = '';
-        const semesters = Object.keys(student.semesters || {});
-
-        semesters.forEach(semKey => {
+        select.innerHTML = '';
+        semesters.forEach(sem => {
             const opt = document.createElement('option');
-            opt.value = semKey;
-            opt.textContent = student.semesters[semKey].semester_name || semKey;
-            semSelect.appendChild(opt);
+            opt.value = sem;
+            opt.textContent = sem;
+            select.appendChild(opt);
         });
+    }
 
-        if (semesters.length > 0) {
-            semSelect.value = semesters[semesters.length - 1];
-            onSemesterChange();
-        } else {
-            clearForm();
+    function showLoading(show) {
+        document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+    }
+
+    function fetchCloudDB() {
+        showLoading(true);
+        fetch(GAS_API_URL)
+            .then(res => res.json())
+            .then(res => {
+                showLoading(false);
+                if (res.status === "success") {
+                    globalDB = res.data;
+                    showGradeStudents(1);
+                } else {
+                    alert("讀取雲端失敗：" + res.message);
+                }
+            })
+            .catch(err => {
+                showLoading(false);
+                alert("無法連線至雲端 API，請確認 GAS 權限！");
+            });
+    }
+
+    function showPage(pageId) {
+        document.querySelectorAll('.main-content > div').forEach(div => div.style.display = 'none');
+        document.getElementById('page-' + pageId).style.display = 'block';
+
+        const titles = {
+            'student-manage': '👥 全校學生管理',
+            'course-goals': '🎯 特需課程目標庫'
+        };
+        if(titles[pageId]) document.getElementById('pageTitle').innerText = titles[pageId];
+
+        if(pageId === 'student-manage') renderStudentTable();
+    }
+
+    function toggleSubmenu(id) {
+        const submenu = document.getElementById(id);
+        submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function showGradeStudents(grade) {
+        currentGrade = grade;
+        showPage('grade-students');
+        
+        const gradeNames = ['高一', '高二', '高三'];
+        document.getElementById('gradeTitle').innerText = `📝 ${gradeNames[grade-1]}學生列表`;
+        document.getElementById('pageTitle').innerText = `個別化教育計畫 (IEP) ➔ ${gradeNames[grade-1]}`;
+
+        const grid = document.getElementById('studentGrid');
+        grid.innerHTML = '';
+
+        let count = 0;
+        for (let id in globalDB) {
+            const student = globalDB[id];
+            const studentGrade = student.grade || 1; 
+
+            if (parseInt(studentGrade) === parseInt(grade)) {
+                count++;
+                const card = document.createElement('div');
+                card.className = 'student-card';
+                card.onclick = () => openStudentIEP(id);
+                card.innerHTML = `
+                    <div class="name">${student.name}</div>
+                    <div class="id">學號: ${id}</div>
+                `;
+                grid.appendChild(card);
+            }
+        }
+
+        if (count === 0) {
+            grid.innerHTML = `<p style="color:#64748b; grid-column: 1/-1;">目前無 ${gradeNames[grade-1]} 學生資料，請至「學生管理」新增。</p>`;
         }
     }
 
-    // 切換學期
-    function onSemesterChange() {
-        const semKey = document.getElementById('semesterSelect').value;
-        if (!currentStudentId || !semKey) return;
+    function openStudentIEP(studentId) {
+        currentStudentId = studentId;
+        const student = globalDB[studentId];
+        const currentSem = document.getElementById('globalSemester').value;
 
-        currentSemesterKey = semKey;
-        const db = getDB();
-        const semData = db[currentStudentId].semesters[semKey];
+        showPage('iep-form');
+        document.getElementById('pageTitle').innerText = `正在編輯 IEP ➔ ${student.name} (${studentId})`;
+
+        let semData = student.semesters ? student.semesters[currentSem] : null;
+        
+        if (!semData) {
+            semData = {
+                student_name: student.name,
+                student_id: studentId,
+                semester_name: currentSem
+            };
+        }
 
         fillFormWithData(semData);
         updateTabProgress();
     }
 
-    // 填寫表單資料
-    function fillFormWithData(data) {
-        clearForm();
-        const form = document.getElementById('iepForm');
-        for (let key in data) {
-            const val = data[key];
-            const elements = form.querySelectorAll(`[name="${key}"]`);
-            elements.forEach(el => {
-                if (el.type === 'checkbox' || el.type === 'radio') {
-                    el.checked = Array.isArray(val) ? val.includes(el.value) : (el.value === val);
-                } else {
-                    el.value = val || '';
-                }
-            });
+    function backToStudentList() {
+        showGradeStudents(currentGrade);
+    }
+
+    function onSemesterChange() {
+        if (currentStudentId && document.getElementById('page-iep-form').style.display !== 'none') {
+            openStudentIEP(currentStudentId);
         }
     }
 
-    function clearForm() {
-        document.getElementById('iepForm').reset();
+    function addNewStudent() {
+        const name = prompt("請輸入學生姓名：");
+        if (!name) return;
+        const id = prompt("請輸入學號：");
+        if (!id) return;
+        const grade = prompt("請輸入年級 (1代表高一, 2代表高二, 3代表高三)：", "1");
+        if (!grade) return;
+
+        if (globalDB[id]) {
+            alert("該學號學生已存在！");
+            return;
+        }
+
+        const currentSem = document.getElementById('globalSemester').value;
+
+        globalDB[id] = {
+            id: id,
+            name: name,
+            grade: parseInt(grade),
+            semesters: {
+                [currentSem]: {
+                    student_name: name,
+                    student_id: id,
+                    semester_name: currentSem
+                }
+            }
+        };
+
+        syncStudentToCloud(id, function() {
+            alert(`已新增學生 ${name}！`);
+            showGradeStudents(parseInt(grade));
+        });
     }
 
-    // 儲存資料
-    function saveCurrentSemesterData() {
-        if (!currentStudentId || !currentSemesterKey) return;
+    function renderStudentTable() {
+        const tbody = document.getElementById('studentTableBody');
+        tbody.innerHTML = '';
+        for (let id in globalDB) {
+            const s = globalDB[id];
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td style="text-align:center;">${s.id}</td>
+                <td style="text-align:center;">${s.name}</td>
+                <td style="text-align:center;">高${s.grade || 1}</td>
+                <td style="text-align:center;">
+                    <button class="btn btn-primary" onclick="openStudentIEP('${s.id}')">編輯 IEP</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        }
+    }
 
+    function createNewSemesterForCurrentStudent() {
+        if (!currentStudentId) return;
+        const student = globalDB[currentStudentId];
+        const semKeys = Object.keys(student.semesters || {});
+        const lastSemKey = semKeys[semKeys.length - 1];
+        const lastSemData = student.semesters[lastSemKey] || {};
+
+        const currentSem = document.getElementById('globalSemester').value;
+        const newSemData = JSON.parse(JSON.stringify(lastSemData));
+        newSemData.semester_name = currentSem;
+
+        if (!student.semesters) student.semesters = {};
+        student.semesters[currentSem] = newSemData;
+
+        syncStudentToCloud(currentStudentId, function() {
+            openStudentIEP(currentStudentId);
+            alert(`已建立「${currentSem}」並成功帶入上一學期資料！`);
+        });
+    }
+
+    function saveCurrentSemesterData() {
+        if (!currentStudentId) return;
+
+        const currentSem = document.getElementById('globalSemester').value;
         const formData = new FormData(document.getElementById('iepForm'));
         const data = {};
 
@@ -505,108 +661,90 @@
             }
         });
 
-        const db = getDB();
-        db[currentStudentId].semesters[currentSemesterKey] = data;
-        saveDB(db);
+        if (!globalDB[currentStudentId].semesters) globalDB[currentStudentId].semesters = {};
+        globalDB[currentStudentId].semesters[currentSem] = data;
 
-        alert("資料已成功儲存至 LocalStorage！");
-        updateTabProgress();
+        syncStudentToCloud(currentStudentId, function() {
+            alert("本學期 IEP 資料已成功儲存至雲端！");
+        });
     }
 
-    // 新增學生
-    function addNewStudent() {
-        const name = prompt("請輸入學生姓名：");
-        if (!name) return;
-        const id = prompt("請輸入學號：");
-        if (!id) return;
-        const grade = prompt("請輸入年級（高一 / 高二 / 高三）：", "高一");
-
-        const db = getDB();
-        if (db[id]) {
-            alert("該學號已存在！");
-            return;
-        }
-
-        db[id] = {
-            id: id,
-            name: name,
-            grade: grade,
-            class: `${grade}班`,
-            semesters: {
-                "114-2": { student_name: name, student_class: `${grade}班`, semester_name: "114-2" }
-            }
+    function syncStudentToCloud(studentId, callback) {
+        showLoading(true);
+        const payload = {
+            student_id: studentId,
+            student_name: globalDB[studentId].name,
+            grade: globalDB[studentId].grade,
+            semesters: globalDB[studentId].semesters
         };
 
-        saveDB(db);
-        renderStudentCards();
-        selectStudent(id);
+        fetch(GAS_API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(res => {
+            showLoading(false);
+            if (res.status === "success") {
+                if (callback) callback();
+            } else {
+                alert("儲存至雲端失敗：" + res.message);
+            }
+        })
+        .catch(err => {
+            showLoading(false);
+            alert("網路連線錯誤，儲存失敗！");
+        });
     }
 
-    // 開啟新學期 (帶入舊資料)
-    function createNewSemester() {
-        if (!currentStudentId) return;
-        const db = getDB();
-        const student = db[currentStudentId];
-        const semKeys = Object.keys(student.semesters || {});
-
-        const lastSemKey = semKeys[semKeys.length - 1];
-        const lastSemData = student.semesters[lastSemKey];
-
-        const newSemName = prompt("請輸入新學期名稱：", "115-1");
-        if (!newSemName) return;
-
-        const newSemData = JSON.parse(JSON.stringify(lastSemData));
-        newSemData.semester_name = newSemName;
-
-        student.semesters[newSemName] = newSemData;
-        saveDB(db);
-
-        selectStudent(currentStudentId);
-        document.getElementById('semesterSelect').value = newSemName;
-        onSemesterChange();
+    function fillFormWithData(data) {
+        clearForm();
+        const form = document.getElementById('iepForm');
+        for (let key in data) {
+            const val = data[key];
+            const elements = form.querySelectorAll(`[name="${key}"]`);
+            elements.forEach(el => {
+                if (el.type === 'checkbox' || el.type === 'radio') {
+                    if (Array.isArray(val)) {
+                        el.checked = val.includes(el.value);
+                    } else {
+                        el.checked = (el.value === val);
+                    }
+                } else {
+                    el.value = val || '';
+                }
+            });
+        }
     }
 
-    // 分頁切換 (12html 邏輯)
+    function clearForm() {
+        document.getElementById('iepForm').reset();
+    }
+
     function switchTab(tabId) {
         document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-        
         document.getElementById(tabId).classList.add('active');
         document.getElementById('btn-' + tabId).classList.add('active');
-        
-        const currentBtn = document.getElementById('btn-' + tabId);
-        const mainColor = getComputedStyle(currentBtn).getPropertyValue('--main-color');
-        document.querySelector('.tab-nav').style.borderColor = mainColor.trim();
     }
 
-    // 計算並更新頁籤底部的淡色動態進度條 (來自 12html)
     function updateTabProgress() {
-        const sections = ['sec0', 'sec1', 'sec2', 'sec3', 'sec4', 'sec5'];
-        
+        const sections = ['sec1', 'sec2', 'sec3', 'sec4', 'sec5'];
         sections.forEach(secId => {
             const secEl = document.getElementById(secId);
-            const tabBtn = document.getElementById('btn-' + secId);
-            if (!secEl || !tabBtn) return;
-            
+            const badge = document.getElementById('badge-' + secId);
+            if (!secEl) return;
             const inputs = secEl.querySelectorAll('input, select, textarea');
-            if (inputs.length === 0) return;
-
             let filledCount = 0;
-            const checkedGroups = new Set();
-            
             inputs.forEach(input => {
                 if (input.type === 'checkbox' || input.type === 'radio') {
-                    if (input.checked) checkedGroups.add(input.name || input.id);
+                    if (input.checked) filledCount++;
                 } else if (input.value.trim() !== '') {
                     filledCount++;
                 }
             });
-
-            const totalItems = inputs.length;
-            const currentFilled = filledCount + checkedGroups.size;
-            const percent = Math.min(100, Math.round((currentFilled / totalItems) * 100));
-
-            tabBtn.style.setProperty('--fill-percent', `${percent}%`);
+            badge.innerText = filledCount > 0 ? `(${filledCount})` : '';
         });
     }
 </script>

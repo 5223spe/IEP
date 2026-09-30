@@ -52,10 +52,11 @@
 
         .sidebar-header {
             padding: 20px 15px;
-            font-size: 18px;
+            font-size: 22px;
             font-weight: bold;
             text-align: center;
             background-color: #0f172a;
+            flex-direction: column;
             border-bottom: 1px solid #334155;
             letter-spacing: 1px;
         }
@@ -389,11 +390,11 @@
     <!-- 左側導覽列 Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
-            IEP 個別化教育系統
+        <span>🏫</span> 鳳新高中 IEP
         </div>
         <ul class="sidebar-menu">
             <li><a href="#" id="menu-student" class="active" onclick="switchPage('student')"><span class="icon">👥</span> 學生管理</a></li>
-            <li><a href="#" id="menu-course" onclick="switchPage('course')"><span class="icon">📚</span> 特需課程目標</a></li>
+            <li><a href="#" id="menu-course" onclick="switchPage('course')"><span class="icon">🎯</span> 特需課程目標</a></li>
             <li><a href="#" id="menu-iep" onclick="switchPage('iep')"><span class="icon">📝</span> IEP 填寫與維護</a></li>
         </ul>
     </div>
@@ -612,7 +613,7 @@
 
                 <div class="form-group">
                     <label for="modal_class">班級：</label>
-                    <input type="text" id="modal_class" placeholder="例：12 (只需輸入班號，不需打年級)">
+                    <input type="text" id="modal_class" placeholder="例：12 ">
                 </div>
             </div>
             <div class="modal-footer">
